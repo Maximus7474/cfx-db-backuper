@@ -122,7 +122,7 @@ function DB:GetTableData(tableName)
     end
 
     local insertQuery = string.format(
-        "-- Data for table: %s\nINSERT INTO `%s` (%s) VALUES (\n\t%s\n);",
+        "-- Data for table: %s\nINSERT INTO `%s` (%s) VALUES\n\t%s\n;",
         tableName, tableName, table.concat(columns, ', '),
         table.concat(entries, ',\n\t')
     )
