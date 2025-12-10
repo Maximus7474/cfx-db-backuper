@@ -12,3 +12,5 @@ server_scripts {
 	'config.lua',
     'modules/*.lua',
 }
+
+dependency 'oxmysql'
