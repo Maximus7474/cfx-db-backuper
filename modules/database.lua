@@ -81,21 +81,32 @@ function DB:GetTableData(tableName)
 		- Splitting table up in smaller chunks to avoid oversized queries 
 	]]
 
-    local query = string.format("SELECT * FROM `%s`;", tableName)
-    local data = MySQL.query.await(query)
+    local entryCountQuery = string.format("SELECT COUNT(1) as 'entries' FROM `%s`;", tableName)
+	local tableEntries = MySQL.single.await(entryCountQuery)?.entries
+	local packets = math.ceil(tableEntries / Config.QuerySize)
 
-    if #data < 1 then
+	local tableData = {}
+
+	for i = 0, packets do
+		local startIdx, size = i * Config.QuerySize, Config.QuerySize
+		local query = string.format("SELECT * FROM `%s` LIMIT ?, ?;", tableName)
+		local data = MySQL.query.await(query, {startIdx, size})
+
+		tableData = CombineTables(tableData, data)
+	end
+
+    if #tableData < 1 then
         return string.format('-- No data for table: "%s"', tableName)
     end
 
     local columns = {}
-    for column, _ in pairs(data[1]) do
+    for column, _ in pairs(tableData[1]) do
         table.insert(columns, column)
     end
 
     local entries = {}
-    for i = 1, #data do
-        local entry, entryData = {}, data[i]
+    for i = 1, #tableData do
+        local entry, entryData = {}, tableData[i]
 
         for c = 1, #columns do
             local colName = columns[c]
