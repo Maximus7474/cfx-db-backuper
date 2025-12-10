@@ -1,5 +1,5 @@
 DB = {
-    cachedTables = {'users'}
+    cachedTables = {}
 }
 
 ---get all table names from the database
