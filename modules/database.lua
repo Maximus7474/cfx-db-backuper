@@ -1,5 +1,5 @@
 DB = {
-    cachedTables = {}
+    cachedTables = {},
 }
 
 ---get all table names from the database
@@ -17,7 +17,7 @@ function DB:GetTables()
         local table_name = response[i]?.table_name
 
         if table_name then
-            table.insert(tableNames, table_name)
+            tableNames[table_name] = true
         end
     end
 
@@ -30,11 +30,7 @@ end
 ---@param tableName string
 ---@return string createTableQuery
 function DB:GetTableDef(tableName)
-    for i = 1, #self.cachedTables do
-        local ref = self.cachedTables[i]
-
-        if ref == tableName then goto valid end
-    end
+	if self.cachedTables[tableName] then goto valid end
 
     error(string.format('An invalid table name was passed to "DB:GetTableDef": %s', tableName))
 
@@ -67,11 +63,7 @@ end
 ---@param tableName string
 ---@return string insertQuery
 function DB:GetTableData(tableName)
-    for i = 1, #self.cachedTables do
-        local ref = self.cachedTables[i]
-
-        if ref == tableName then goto valid end
-    end
+	if self.cachedTables[tableName] then goto valid end
 
     error(string.format('An invalid table name was passed to "DB:GetTableDef": %s', tableName))
 
