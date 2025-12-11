@@ -2,7 +2,7 @@ fx_version 'cerulean'
 games { 'gta5', 'rdr2' }
 server_only 'yes'
 
-version 'v0.1.0'
+version 'v0.2.0'
 author 'Maximus7474'
 description 'Basic script to "dump" your database to create backups within fxserver'
 repository 'https://github.com/Maximus7474/cfx-db-backuper'
