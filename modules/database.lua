@@ -21,6 +21,31 @@ function DB:GetTables()
         end
     end
 
+	if type(Config.ExclusiveTables) == "table" then
+		local filtered = {}
+		for i = 1, #Config.ExclusiveTables do
+			local tableName = Config.ExclusiveTables[i]
+
+			if tableNames[tableName] then
+				filtered[tableName] = true
+			else
+				warn(string.format('Table %s was listed in Config.ExclusiveTables but doesn\'t exist in the database !', tableName))
+			end
+		end
+
+		self.cachedTables = filtered
+
+		return filtered
+	elseif type(Config.ExcludedTables) == "table" then
+		for i = 1, #Config.ExcludedTables do
+			local tableName = Config.ExcludedTables[i]
+
+			if tableNames[tableName] then
+				tableNames[tableName] = nil
+			end
+		end
+	end
+
     self.cachedTables = tableNames
 
     return tableNames
