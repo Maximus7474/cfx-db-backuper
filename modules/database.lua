@@ -1,10 +1,13 @@
 DB = {
     cachedTables = {},
+	cachePopulated = false,
 }
 
 ---get all table names from the database
 ---@return string[]
 function DB:GetTables()
+	if self.cachePopulated then return self.cachedTables end
+
     local response = MySQL.query.await([[
     SELECT table_name
     FROM information_schema.tables
@@ -44,11 +47,15 @@ function DB:GetTables()
 				tableNames[tableName] = nil
 			end
 		end
+
+		self.cachedTables = tableNames
+	else
+		self.cachedTables = tableNames
 	end
 
-    self.cachedTables = tableNames
+	self.cachePopulated = true
 
-    return tableNames
+    return self.cachedTables
 end
 
 ---get the query to create the database table
